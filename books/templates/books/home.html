@@ -9,7 +9,7 @@
     <a href="{% url 'create_book' %}">Create new book</a>
     <ul>
         {% for b in books %}
-        <li>{{ b.title }} - {{ b.author }}</li>
+        <li>{{ b.title }} - {{ b.author }} <a href="{% url 'delete_book' b.pk %}" title="Delete book">🗑️</a></li>
         {% endfor %}
     </ul>
 </body>

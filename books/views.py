@@ -1,5 +1,5 @@
-from django.http import HttpResponse, HttpRequest
-from django.shortcuts import render, redirect
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import BookForm
 from .models import Book
@@ -23,15 +23,20 @@ def list_books(request: HttpRequest):
 def create_book(request: HttpRequest):
     if request.method == "POST":
         # detaliile book-ului care au fost trimise de form folosind HTTP POST request, se afla in request.POST ca un dictionar.
-        book_instance = BookForm(request.POST)
-        if book_instance.is_valid():
+        form = BookForm(request.POST)
+        if form.is_valid():
             # aici se creaza un book in baza de date!
-            book_instance.save()
+            form.save()
             return redirect("create_book")
     else:
         # in cazul acesta, request-ul poate fi GET, PUT, PATCH, DELETE...
         form = BookForm()
-        list1 = [10, 20, 30, 40]
-        return render(request, "books/book_form.html", context={"form": form, "list1":list1}
+    return render(request, "books/book_form.html", context={"form": form})
 
-                  )
+def delete_book(request: HttpRequest, pk: int):
+    book = get_object_or_404(Book, pk=pk)
+    if request.method == "POST":
+        book.delete()
+        return redirect("home")
+
+    return render(request, "books/book_confirm_delete.html", context={"book": book})
