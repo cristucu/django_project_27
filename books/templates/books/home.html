@@ -1,16 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Book Manager 1.0</title>
-</head>
-<body>
 
-    <a href="{% url 'create_book' %}">Create new book</a>
-    <ul>
-        {% for b in books %}
-        <li>{{ b.title }} - {{ b.author }} <a href="{% url 'delete_book' b.pk %}" title="Delete book">🗑️</a></li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+
+{% extends "books/base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<label for="sort">Sort by: </label>
+<select id="sort" onchange="changeSort()">
+
+  <option value="asc">Title A->Z</option>
+  <option value="desc">Title Z->A</option>
+
+</select>
+
+<script>
+
+let s = new URLSearchParams(document.location.search);
+s = s.get("sort");
+document.getElementById("sort").value = s;
+
+function changeSort() {
+const sort = document.getElementById("sort").value;
+window.location.href = "?sort=" + sort;
+}
+
+</script>
+<ul>
+{% for b in books %}
+<li>{{ b.title }} - {{ b.author }}
+<a href="{% url 'delete_book' b.pk %}" >🗑️</a>
+<a href="{% url 'update_book' b.pk %}" >✏️️</a>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
